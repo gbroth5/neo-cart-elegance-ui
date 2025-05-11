@@ -18,7 +18,7 @@ export function CartIcon({ itemCount }: CartIconProps) {
       size="icon"
       className={`relative rounded-full transition-all duration-300 ${
         isHovering ? "bg-primary/10" : ""
-      } animate-float`}
+      }`}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
       onClick={() => navigate("/cart")}
