@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { ProductCard } from "./ProductCard";
-import { Product } from "@/lib/data";
+import { Product, CartItem } from "@/lib/data";
 
 interface ProductGridProps {
   products: Product[];
@@ -16,12 +16,11 @@ export function ProductGrid({ products, onAddToCart }: ProductGridProps) {
       {products.map((product, index) => (
         <div 
           key={product.id} 
-          className="animate-fadeIn transition-all duration-500 ease-out perspective-1000" 
+          className="animate-fadeIn transition-all duration-500 ease-out" 
           style={{ 
             animationDelay: `${index * 100}ms`,
-            transform: hoveredProductId === product.id ? 'translateY(-8px) rotateY(5deg)' : 'none',
-            transition: 'transform 0.5s ease',
-            transformStyle: 'preserve-3d'
+            transform: hoveredProductId === product.id ? 'translateY(-8px)' : 'none',
+            transition: 'transform 0.3s ease'
           }}
           onMouseEnter={() => setHoveredProductId(product.id)}
           onMouseLeave={() => setHoveredProductId(null)}
