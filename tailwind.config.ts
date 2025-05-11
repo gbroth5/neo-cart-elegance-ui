@@ -89,6 +89,22 @@ export default {
           '0%, 100%': { opacity: '1' },
           '50%': { opacity: '0.7' },
         },
+        flip: {
+          '0%': { transform: 'rotateY(0deg)' },
+          '100%': { transform: 'rotateY(360deg)' },
+        },
+        "spin-slow": {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        },
+        ping: {
+          '0%': { transform: 'scale(1)', opacity: '1' },
+          '75%, 100%': { transform: 'scale(2)', opacity: '0' },
+        },
+        bounce: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-25%)' },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -96,9 +112,19 @@ export default {
         "fadeIn": "fadeIn 0.5s ease-out forwards",
         "float": "float 3s ease-in-out infinite",
         "pulse": "pulse 2s ease-in-out infinite",
+        "flip": "flip 0.6s ease-in-out",
+        "spin-slow": "spin-slow 8s linear infinite",
+        "ping": "ping 1s cubic-bezier(0, 0, 0.2, 1)",
+        "bounce": "bounce 0.5s ease-in-out"
       },
       backdropBlur: {
         xs: '2px',
+      },
+      transformStyle: {
+        'preserve-3d': 'preserve-3d',
+      },
+      perspective: {
+        '1000': '1000px',
       },
     },
   },
