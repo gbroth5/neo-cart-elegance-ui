@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -44,19 +43,6 @@ export function Navbar({ cartItems }: NavbarProps) {
             NeoCart
           </span>
         </Link>
-
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6">
-          <Link to="/" className="nav-link">Home</Link>
-          <Link to="/" onClick={() => {
-            const techTab = document.querySelector('[value="tech"]') as HTMLElement;
-            if (techTab) techTab.click();
-          }} className="nav-link">Tech</Link>
-          <Link to="/" onClick={() => {
-            const fashionTab = document.querySelector('[value="fashion"]') as HTMLElement;
-            if (fashionTab) fashionTab.click();
-          }} className="nav-link">Fashion</Link>
-        </nav>
 
         {/* Action Buttons */}
         <div className="flex items-center gap-3">
