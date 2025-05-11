@@ -1,15 +1,27 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navbar } from "@/components/layout/Navbar";
-import { CartItem, initialCart } from "@/lib/data";
+import { CartItem } from "@/lib/data";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState<CartItem[]>(initialCart);
+  // Load cart items from localStorage if available
+  const loadCartItems = (): CartItem[] => {
+    const savedCart = localStorage.getItem('neocart-items');
+    return savedCart ? JSON.parse(savedCart) : [];
+  };
+
+  const [cartItems, setCartItems] = useState<CartItem[]>(loadCartItems);
   const navigate = useNavigate();
+
+  // Save cart items to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('neocart-items', JSON.stringify(cartItems));
+  }, [cartItems]);
 
   const totalPrice = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -35,6 +47,10 @@ export default function CartPage() {
   };
 
   const handleRemoveItem = (id: string) => {
+    const itemToRemove = cartItems.find(item => item.id === id);
+    if (itemToRemove) {
+      toast.success(`${itemToRemove.name} removed from cart`);
+    }
     setCartItems(cartItems.filter((item) => item.id !== id));
   };
 

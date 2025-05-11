@@ -1,18 +1,30 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ProductGrid } from "@/components/products/ProductGrid";
 import { Navbar } from "@/components/layout/Navbar";
-import { products, Product, CartItem, initialCart } from "@/lib/data";
+import { products, Product, CartItem } from "@/lib/data";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { toast } from "sonner";
 
 export default function Index() {
-  const [cartItems, setCartItems] = useState<CartItem[]>(initialCart);
+  // Load cart items from localStorage if available
+  const loadCartItems = (): CartItem[] => {
+    const savedCart = localStorage.getItem('neocart-items');
+    return savedCart ? JSON.parse(savedCart) : [];
+  };
+  
+  const [cartItems, setCartItems] = useState<CartItem[]>(loadCartItems);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   // Filter products by category
   const filteredProducts = selectedCategory === "all" 
     ? products 
     : products.filter(product => product.category === selectedCategory);
+
+  // Save cart items to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('neocart-items', JSON.stringify(cartItems));
+  }, [cartItems]);
 
   // Add to cart handler
   const handleAddToCart = (product: Product) => {
@@ -27,9 +39,11 @@ export default function Index() {
           ...newCart[existingItemIndex],
           quantity: newCart[existingItemIndex].quantity + 1
         };
+        toast.success(`Added another ${product.name} to your cart!`);
         return newCart;
       } else {
         // If not, add new item with quantity 1
+        toast.success(`${product.name} added to your cart!`);
         return [...prev, { ...product, quantity: 1 }];
       }
     });

@@ -48,8 +48,14 @@ export function Navbar({ cartItems }: NavbarProps) {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-6">
           <Link to="/" className="nav-link">Home</Link>
-          <Link to="/#tech" className="nav-link">Tech</Link>
-          <Link to="/#fashion" className="nav-link">Fashion</Link>
+          <Link to="/" onClick={() => {
+            const techTab = document.querySelector('[value="tech"]') as HTMLElement;
+            if (techTab) techTab.click();
+          }} className="nav-link">Tech</Link>
+          <Link to="/" onClick={() => {
+            const fashionTab = document.querySelector('[value="fashion"]') as HTMLElement;
+            if (fashionTab) fashionTab.click();
+          }} className="nav-link">Fashion</Link>
         </nav>
 
         {/* Action Buttons */}
@@ -88,16 +94,28 @@ export function Navbar({ cartItems }: NavbarProps) {
               Home
             </Link>
             <Link 
-              to="/#tech" 
+              to="/" 
               className="px-4 py-2 hover:bg-primary/10 rounded-md transition-colors"
-              onClick={() => setIsMobileMenuOpen(false)}
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                setTimeout(() => {
+                  const techTab = document.querySelector('[value="tech"]') as HTMLElement;
+                  if (techTab) techTab.click();
+                }, 100);
+              }}
             >
               Tech
             </Link>
             <Link 
-              to="/#fashion" 
+              to="/" 
               className="px-4 py-2 hover:bg-primary/10 rounded-md transition-colors"
-              onClick={() => setIsMobileMenuOpen(false)}
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                setTimeout(() => {
+                  const fashionTab = document.querySelector('[value="fashion"]') as HTMLElement;
+                  if (fashionTab) fashionTab.click();
+                }, 100);
+              }}
             >
               Fashion
             </Link>
