@@ -1,14 +1,101 @@
-// Update this page (the content is just a fallback if you fail to update the page)
 
-const Index = () => {
+import { useState } from "react";
+import { ProductGrid } from "@/components/products/ProductGrid";
+import { Navbar } from "@/components/layout/Navbar";
+import { products, Product, CartItem, initialCart } from "@/lib/data";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+export default function Index() {
+  const [cartItems, setCartItems] = useState<CartItem[]>(initialCart);
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+
+  // Filter products by category
+  const filteredProducts = selectedCategory === "all" 
+    ? products 
+    : products.filter(product => product.category === selectedCategory);
+
+  // Add to cart handler
+  const handleAddToCart = (product: Product) => {
+    setCartItems(prev => {
+      // Check if product is already in cart
+      const existingItemIndex = prev.findIndex(item => item.id === product.id);
+      
+      if (existingItemIndex >= 0) {
+        // If it exists, increment quantity
+        const newCart = [...prev];
+        newCart[existingItemIndex] = {
+          ...newCart[existingItemIndex],
+          quantity: newCart[existingItemIndex].quantity + 1
+        };
+        return newCart;
+      } else {
+        // If not, add new item with quantity 1
+        return [...prev, { ...product, quantity: 1 }];
+      }
+    });
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen">
+      <Navbar cartItems={cartItems} />
+      
+      <main className="container mx-auto px-4 pt-32 pb-16 md:px-6">
+        <section className="mb-16 text-center">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+            Elevate Your Lifestyle
+          </h1>
+          <p className="text-lg md:text-xl max-w-3xl mx-auto text-muted-foreground">
+            Discover premium tech and fashion products curated for the modern lifestyle.
+          </p>
+        </section>
+
+        <section className="mb-20">
+          <div className="flex justify-center mb-10">
+            <Tabs defaultValue="all" className="w-full max-w-3xl">
+              <TabsList className="w-full flex justify-center gap-2 bg-secondary p-1 h-auto">
+                <TabsTrigger 
+                  value="all" 
+                  className="flex-1 py-3 data-[state=active]:bg-background"
+                  onClick={() => setSelectedCategory("all")}
+                >
+                  All Products
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="tech" 
+                  className="flex-1 py-3 data-[state=active]:bg-background"
+                  onClick={() => setSelectedCategory("tech")}
+                >
+                  Tech
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="fashion" 
+                  className="flex-1 py-3 data-[state=active]:bg-background"
+                  onClick={() => setSelectedCategory("fashion")}
+                >
+                  Fashion
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="all" className="mt-6">
+                <ProductGrid products={filteredProducts} onAddToCart={handleAddToCart} />
+              </TabsContent>
+              <TabsContent value="tech" className="mt-6">
+                <ProductGrid products={filteredProducts} onAddToCart={handleAddToCart} />
+              </TabsContent>
+              <TabsContent value="fashion" className="mt-6">
+                <ProductGrid products={filteredProducts} onAddToCart={handleAddToCart} />
+              </TabsContent>
+            </Tabs>
+          </div>
+        </section>
+      </main>
+
+      <footer className="glassmorphism py-8">
+        <div className="container mx-auto px-4 text-center">
+          <p className="text-sm text-muted-foreground">
+            &copy; {new Date().getFullYear()} NeoCart. All rights reserved.
+          </p>
+        </div>
+      </footer>
     </div>
   );
-};
-
-export default Index;
+}
