@@ -7,38 +7,6 @@
 
 @layer base {
   :root {
-    --background: 220 33% 98%;
-    --foreground: 222 47% 11%;
-    
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-    
-    --primary: 221 83% 53%;
-    --primary-foreground: 210 40% 98%;
-    
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222 47% 11%;
-    
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
-    
-    --accent: 221 83% 53%;
-    --accent-foreground: 210 40% 98%;
-    
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
-    
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 222 84% 4%;
-    
-    --radius: 0.5rem;
-  }
- 
-  .dark {
     --background: 222 47% 11%;
     --foreground: 210 40% 98%;
  
@@ -66,6 +34,38 @@
     --border: 217 33% 17%;
     --input: 217 33% 17%;
     --ring: 212 94% 49%;
+    
+    --radius: 0.5rem;
+  }
+ 
+  .light {
+    --background: 220 33% 98%;
+    --foreground: 222 47% 11%;
+    
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    
+    --primary: 221 83% 53%;
+    --primary-foreground: 210 40% 98%;
+    
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+    
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    
+    --accent: 221 83% 53%;
+    --accent-foreground: 210 40% 98%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 222 84% 4%;
   }
 }
 
@@ -81,7 +81,7 @@
 
 @layer components {
   .glassmorphism {
-    @apply bg-white/60 dark:bg-black/60 backdrop-blur-lg border border-white/20 dark:border-black/20 shadow-lg;
+    @apply bg-black/60 dark:bg-black/60 backdrop-blur-lg border border-white/10 dark:border-white/10 shadow-lg;
   }
   
   .card-hover {
@@ -90,5 +90,69 @@
   
   .nav-link {
     @apply relative text-foreground/80 hover:text-foreground transition-colors after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all hover:after:w-full;
+  }
+  
+  .task-card {
+    @apply bg-secondary/80 p-4 rounded-lg border border-border shadow-lg transition-all duration-300;
+  }
+  
+  .priority-high {
+    @apply border-l-4 border-red-500;
+  }
+  
+  .priority-medium {
+    @apply border-l-4 border-yellow-500;
+  }
+  
+  .priority-low {
+    @apply border-l-4 border-green-500;
+  }
+  
+  .kanban-column {
+    @apply bg-secondary/40 rounded-lg p-4 min-h-[500px] w-full flex flex-col gap-4;
+  }
+  
+  .animated-bg {
+    @apply relative overflow-hidden;
+  }
+  
+  .animated-bg::before {
+    content: "";
+    @apply absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-50;
+    animation: pulse 8s ease-in-out infinite alternate;
+  }
+  
+  @keyframes pulse {
+    0% {
+      opacity: 0.3;
+      transform: scale(1) rotate(0deg);
+    }
+    100% {
+      opacity: 0.7;
+      transform: scale(1.05) rotate(1deg);
+    }
+  }
+  
+  .animate-in {
+    animation: fadeIn 0.6s ease-out forwards;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animate-hover {
+    @apply transition-all duration-300;
+  }
+  
+  .animate-hover:hover {
+    @apply -translate-y-1 shadow-lg;
   }
 }

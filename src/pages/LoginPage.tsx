@@ -1,166 +1,213 @@
 
 import { useState } from "react";
-import { Navbar } from "@/components/layout/Navbar";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
-import { initialCart } from "@/lib/data";
+import { Label } from "@/components/ui/label";
+import { Spinner } from "@/components/layout/Spinner";
+import { motion } from "framer-motion";
+import ThemeToggle from "@/components/layout/ThemeToggle";
+import { CheckCircle2 } from "lucide-react";
 
-export default function LoginPage() {
+interface LoginPageProps {
+  register?: boolean;
+}
+
+export default function LoginPage({ register = false }: LoginPageProps) {
+  const [isRegister, setIsRegister] = useState(register);
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  
+  const { login, register: registerUser } = useAuth();
   const navigate = useNavigate();
-  const { toast } = useToast();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email && password) {
-      toast({
-        title: "Login successful",
-        description: "Welcome back to NeoCart!",
-      });
-      navigate("/profile");
+    setError(null);
+    setLoading(true);
+    
+    try {
+      if (isRegister) {
+        if (password !== confirmPassword) {
+          setError("Passwords don't match");
+          setLoading(false);
+          return;
+        }
+        
+        await registerUser(name, email, password);
+      } else {
+        await login(email, password);
+      }
+      
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleRegister = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email && password && name) {
-      toast({
-        title: "Registration successful",
-        description: "Your account has been created!",
-      });
-      navigate("/profile");
-    }
+  // Demo credential populator
+  const populateDemoCredentials = () => {
+    setEmail("demo@example.com");
+    setPassword("password");
   };
 
   return (
-    <div className="min-h-screen">
-      <Navbar cartItems={initialCart} />
-
-      <main className="container mx-auto px-4 pt-32 pb-16 md:px-6 flex justify-center">
-        <div className="w-full max-w-md">
-          <Card className="p-6 glassmorphism">
-            <Tabs defaultValue="login" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="login">Login</TabsTrigger>
-                <TabsTrigger value="register">Register</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="login">
-                <form onSubmit={handleLogin} className="space-y-4">
-                  <div className="space-y-2">
-                    <label htmlFor="email" className="block text-sm font-medium">
-                      Email
-                    </label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="your@email.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <label
-                        htmlFor="password"
-                        className="block text-sm font-medium"
-                      >
-                        Password
-                      </label>
-                      <a
-                        href="#"
-                        className="text-xs text-primary hover:underline"
-                      >
-                        Forgot password?
-                      </a>
-                    </div>
-                    <Input
-                      id="password"
-                      type="password"
-                      placeholder="••••••••"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <Button type="submit" className="w-full">
-                    Sign In
+    <div className="min-h-screen flex items-center justify-center animated-bg p-4">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
+      
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Card className="w-[400px] max-w-full glassmorphism">
+          <CardHeader>
+            <CardTitle className="text-center">
+              {isRegister ? "Create an Account" : "Welcome Back"}
+            </CardTitle>
+            <CardDescription className="text-center">
+              {isRegister 
+                ? "Sign up to start managing your tasks" 
+                : "Login to access your task dashboard"}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {isRegister && (
+                <div className="space-y-2">
+                  <Label htmlFor="name">Name</Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                    autoComplete="name"
+                    disabled={loading}
+                  />
+                </div>
+              )}
+              
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  autoComplete="email"
+                  disabled={loading}
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  autoComplete={isRegister ? "new-password" : "current-password"}
+                  disabled={loading}
+                />
+              </div>
+              
+              {isRegister && (
+                <div className="space-y-2">
+                  <Label htmlFor="confirmPassword">Confirm Password</Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
+                    autoComplete="new-password"
+                    disabled={loading}
+                  />
+                </div>
+              )}
+              
+              {error && (
+                <p className="text-sm text-destructive text-center">{error}</p>
+              )}
+              
+              {!isRegister && (
+                <div className="flex justify-end">
+                  <Button 
+                    type="button" 
+                    variant="link" 
+                    size="sm"
+                    onClick={populateDemoCredentials}
+                    className="h-auto p-0"
+                  >
+                    Use demo credentials
                   </Button>
-                </form>
-              </TabsContent>
-
-              <TabsContent value="register">
-                <form onSubmit={handleRegister} className="space-y-4">
-                  <div className="space-y-2">
-                    <label htmlFor="name" className="block text-sm font-medium">
-                      Name
-                    </label>
-                    <Input
-                      id="name"
-                      placeholder="John Doe"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label htmlFor="email" className="block text-sm font-medium">
-                      Email
-                    </label>
-                    <Input
-                      id="email-reg"
-                      type="email"
-                      placeholder="your@email.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label
-                      htmlFor="password"
-                      className="block text-sm font-medium"
-                    >
-                      Password
-                    </label>
-                    <Input
-                      id="password-reg"
-                      type="password"
-                      placeholder="••••••••"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                  </div>
-
-                  <Button type="submit" className="w-full">
-                    Create Account
+                </div>
+              )}
+              
+              <Button 
+                type="submit" 
+                className="w-full" 
+                disabled={loading}
+              >
+                {loading ? (
+                  <Spinner size="sm" />
+                ) : isRegister ? (
+                  "Sign Up"
+                ) : (
+                  "Login"
+                )}
+              </Button>
+            </form>
+          </CardContent>
+          <CardFooter>
+            <p className="text-sm text-center w-full">
+              {isRegister ? (
+                <>
+                  Already have an account?{" "}
+                  <Button 
+                    variant="link" 
+                    className="h-auto p-0" 
+                    onClick={() => setIsRegister(false)}
+                  >
+                    Login
                   </Button>
-                </form>
-              </TabsContent>
-            </Tabs>
-          </Card>
+                </>
+              ) : (
+                <>
+                  Don't have an account?{" "}
+                  <Button 
+                    variant="link" 
+                    className="h-auto p-0" 
+                    onClick={() => setIsRegister(true)}
+                  >
+                    Sign Up
+                  </Button>
+                </>
+              )}
+            </p>
+          </CardFooter>
+        </Card>
+        
+        <div className="mt-8 text-center text-sm text-muted-foreground">
+          <div className="flex items-center justify-center gap-2">
+            <CheckCircle2 className="h-4 w-4 text-primary" />
+            <span>Secure Authentication</span>
+          </div>
         </div>
-      </main>
-
-      <footer className="glassmorphism py-8">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} NeoCart. All rights reserved.
-          </p>
-        </div>
-      </footer>
+      </motion.div>
     </div>
   );
 }
