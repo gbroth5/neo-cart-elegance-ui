@@ -52,15 +52,20 @@ export function ProductCard({ product, onAddToCart, isHovered = false }: Product
         </div>
       </div>
       <CardContent className="pt-4 flex-grow">
-        <div className="flex justify-between items-start mb-2">
-          <h3 className={`font-medium truncate transition-all duration-300 ${isHovered ? "text-primary" : ""}`}>
+        <div className="flex justify-between items-start mb-3">
+          <h3 className={`font-medium text-base md:text-lg line-clamp-2 min-h-[2.5rem] transition-all duration-300 ${isHovered ? "text-primary" : ""}`}>
             {product.name}
           </h3>
-          <span className="text-sm bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+          <span className="text-xs whitespace-nowrap ml-2 bg-primary/10 text-primary px-2 py-0.5 rounded-full">
             {product.category}
           </span>
         </div>
-        <p className="font-semibold text-lg">${product.price.toFixed(2)}</p>
+        <div className="flex items-center justify-between">
+          <p className="font-semibold text-base">
+            <span className="text-sm text-muted-foreground mr-1">Price:</span>
+            ${product.price.toFixed(2)}
+          </p>
+        </div>
       </CardContent>
       <CardFooter className="pt-0 pb-4">
         <Button 
