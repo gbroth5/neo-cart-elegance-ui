@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/layout/Spinner";
 import { motion } from "framer-motion";
-import ThemeToggle from "@/components/layout/ThemeToggle";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { CheckCircle2 } from "lucide-react";
 
 interface LoginPageProps {
